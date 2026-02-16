@@ -27,7 +27,7 @@ class CompanyUserByQuoteRequestResourceRelationshipExpander extends AbstractComp
 
         if (
             !$payload ||
-            !($payload instanceof QuoteRequestTransfer) ||
+            !($payload instanceof QuoteRequestTransfer) || /** @phpstan-ignore instanceof.alwaysTrue */
             $payload->getCompanyUser() === null ||
             $payload->getCompanyUser()->getUuid() === null
         ) {

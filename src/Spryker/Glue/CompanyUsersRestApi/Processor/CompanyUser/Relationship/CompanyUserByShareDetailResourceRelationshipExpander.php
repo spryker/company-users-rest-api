@@ -24,6 +24,7 @@ class CompanyUserByShareDetailResourceRelationshipExpander extends AbstractCompa
          * @var \Generated\Shared\Transfer\ShareDetailTransfer|null $payload
          */
         $payload = $resource->getPayload();
+        /** @phpstan-ignore instanceof.alwaysTrue */
         if (!$payload || !($payload instanceof ShareDetailTransfer)) {
             return null;
         }
