@@ -49,12 +49,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
      */
     protected CompanyUsersRestApiToCompanyUserStorageClientInterface $companyUserStorageClient;
 
-    /**
-     * @param \Spryker\Glue\CompanyUsersRestApi\Dependency\Client\CompanyUsersRestApiToCompanyUserClientInterface $companyUserClient
-     * @param \Spryker\Client\CompanyUsersRestApi\CompanyUsersRestApiClientInterface $companyUsersRestApiClient
-     * @param \Spryker\Glue\CompanyUsersRestApi\Processor\RestResponseBuilder\CompanyUserRestResponseBuilderInterface $companyUserRestResponseBuilder
-     * @param \Spryker\Glue\CompanyUsersRestApi\Dependency\Client\CompanyUsersRestApiToCompanyUserStorageClientInterface $companyUserStorageClient
-     */
     public function __construct(
         CompanyUsersRestApiToCompanyUserClientInterface $companyUserClient,
         CompanyUsersRestApiClientInterface $companyUsersRestApiClient,
@@ -67,11 +61,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         $this->companyUserStorageClient = $companyUserStorageClient;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function getCompanyUserByResourceId(RestRequestInterface $restRequest): RestResponseInterface
     {
         $idResource = $restRequest->getResource()->getId();
@@ -92,11 +81,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         return $this->getCompanyUser($idResource, $restRequest);
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function getCompanyUserCollection(RestRequestInterface $restRequest): RestResponseInterface
     {
         $idCompany = $restRequest->getRestUser()->getIdCompany();
@@ -125,12 +109,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         );
     }
 
-    /**
-     * @param string $companyUserUuid
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     protected function getCompanyUser(string $companyUserUuid, RestRequestInterface $restRequest): RestResponseInterface
     {
         $companyUserStorageTransfer = $this->companyUserStorageClient
@@ -151,11 +129,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         return $this->companyUserRestResponseBuilder->createCompanyUserResponse($companyUserTransfer);
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     protected function getCompanyUsersByCustomerReference(RestRequestInterface $restRequest): RestResponseInterface
     {
         $customerTransfer = (new CustomerTransfer())
@@ -166,12 +139,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         return $this->companyUserRestResponseBuilder->createCompanyUserCollectionResponse($companyUserCollectionTransfer);
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer
-     */
     protected function applyFilters(
         RestRequestInterface $restRequest,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -189,12 +156,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         return $companyUserCriteriaFilterTransfer;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer
-     */
     protected function applyCompanyBusinessUnitsResourceFilter(
         RestRequestInterface $restRequest,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -210,12 +171,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         return $companyUserCriteriaFilterTransfer;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer
-     */
     protected function applyCompanyRolesResourceFilter(
         RestRequestInterface $restRequest,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -231,11 +186,6 @@ class CompanyUserReader implements CompanyUserReaderInterface
         return $companyUserCriteriaFilterTransfer;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Generated\Shared\Transfer\FilterTransfer
-     */
     protected function createFilterTransfer(RestRequestInterface $restRequest): FilterTransfer
     {
         return (new FilterTransfer())

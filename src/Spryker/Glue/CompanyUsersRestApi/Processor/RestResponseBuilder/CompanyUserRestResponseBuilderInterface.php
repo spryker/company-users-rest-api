@@ -15,53 +15,25 @@ use Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface;
 
 interface CompanyUserRestResponseBuilderInterface
 {
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserResponse(
         CompanyUserTransfer $companyUserTransfer
     ): RestResponseInterface;
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserCollectionTransfer $companyUserCollectionTransfer
-     * @param int $totalItems
-     * @param int $limit
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserCollectionResponse(
         CompanyUserCollectionTransfer $companyUserCollectionTransfer,
         int $totalItems = 0,
         int $limit = 0
     ): RestResponseInterface;
 
-    /**
-     * @param string $companyUserUuid
-     * @param \Generated\Shared\Transfer\RestCompanyUserAttributesTransfer $restCompanyUserAttributesTransfer
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface
-     */
     public function createCompanyUsersRestResource(
         string $companyUserUuid,
         RestCompanyUserAttributesTransfer $restCompanyUserAttributesTransfer,
         CompanyUserTransfer $companyUserTransfer
     ): RestResourceInterface;
 
-    /**
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserNotSelectedErrorResponse(): RestResponseInterface;
 
-    /**
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserNotFoundErrorResponse(): RestResponseInterface;
 
-    /**
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserHasNoPermissionErrorResponse(): RestResponseInterface;
 }

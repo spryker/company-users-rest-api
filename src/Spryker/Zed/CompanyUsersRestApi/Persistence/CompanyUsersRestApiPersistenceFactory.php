@@ -19,25 +19,16 @@ use Spryker\Zed\Kernel\Persistence\AbstractPersistenceFactory;
  */
 class CompanyUsersRestApiPersistenceFactory extends AbstractPersistenceFactory
 {
-    /**
-     * @return \Spryker\Zed\CompanyUsersRestApi\Persistence\Mapper\CompanyUsersRestApiMapper
-     */
     public function createCompanyUsersRestApiMapper(): CompanyUsersRestApiMapper
     {
         return new CompanyUsersRestApiMapper();
     }
 
-    /**
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     public function getCompanyUserPropelQuery(): SpyCompanyUserQuery
     {
         return $this->getProvidedDependency(CompanyUsersRestApiDependencyProvider::PROPEL_QUERY_COMPANY_USER);
     }
 
-    /**
-     * @return \Orm\Zed\CompanyRole\Persistence\SpyCompanyRoleQuery
-     */
     public function getCompanyRolePropelQuery(): SpyCompanyRoleQuery
     {
         return $this->getProvidedDependency(CompanyUsersRestApiDependencyProvider::PROPEL_QUERY_COMPANY_ROLE);

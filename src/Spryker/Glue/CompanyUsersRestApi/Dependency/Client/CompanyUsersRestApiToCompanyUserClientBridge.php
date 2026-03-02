@@ -26,22 +26,12 @@ class CompanyUsersRestApiToCompanyUserClientBridge implements CompanyUsersRestAp
         $this->companyUserClient = $companyUserClient;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCollectionTransfer
-     */
     public function getActiveCompanyUsersByCustomerReference(
         CustomerTransfer $customerTransfer
     ): CompanyUserCollectionTransfer {
         return $this->companyUserClient->getActiveCompanyUsersByCustomerReference($customerTransfer);
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer
-     */
     public function getCompanyUserById(CompanyUserTransfer $companyUserTransfer): CompanyUserTransfer
     {
         return $this->companyUserClient->getCompanyUserById($companyUserTransfer);

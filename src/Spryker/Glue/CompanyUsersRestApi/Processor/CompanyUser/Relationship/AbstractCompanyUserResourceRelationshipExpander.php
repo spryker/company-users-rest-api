@@ -26,10 +26,6 @@ abstract class AbstractCompanyUserResourceRelationshipExpander implements Compan
      */
     protected $companyUserMapper;
 
-    /**
-     * @param \Spryker\Glue\CompanyUsersRestApi\Processor\RestResponseBuilder\CompanyUserRestResponseBuilderInterface $companyUserRestResponseBuilder
-     * @param \Spryker\Glue\CompanyUsersRestApi\Processor\Mapper\CompanyUserMapperInterface $companyUserMapper
-     */
     public function __construct(
         CompanyUserRestResponseBuilderInterface $companyUserRestResponseBuilder,
         CompanyUserMapperInterface $companyUserMapper
@@ -60,18 +56,8 @@ abstract class AbstractCompanyUserResourceRelationshipExpander implements Compan
         }
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface $resource
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
-     */
     abstract protected function findCompanyUserTransferInPayload(RestResourceInterface $resource): ?CompanyUserTransfer;
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface
-     */
     protected function createCompanyUserRestResource(
         CompanyUserTransfer $companyUserTransfer
     ): RestResourceInterface {

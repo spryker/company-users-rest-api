@@ -19,19 +19,11 @@ class CompanyUserExpander implements CompanyUserExpanderInterface
      */
     protected $companyUserFacade;
 
-    /**
-     * @param \Spryker\Zed\CompanyUsersRestApi\Dependency\Facade\CompanyUsersRestApiToCompanyUserFacadeInterface $companyUserFacade
-     */
     public function __construct(CompanyUsersRestApiToCompanyUserFacadeInterface $companyUserFacade)
     {
         $this->companyUserFacade = $companyUserFacade;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     *
-     * @return \Generated\Shared\Transfer\QuoteTransfer
-     */
     public function expandQuoteCustomerWithCompanyUser(QuoteTransfer $quoteTransfer): QuoteTransfer
     {
         if (!$this->isCompanyUser($quoteTransfer->getCustomer())) {
@@ -47,12 +39,6 @@ class CompanyUserExpander implements CompanyUserExpanderInterface
         return $quoteTransfer;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\RestCheckoutRequestAttributesTransfer $restCheckoutRequestAttributesTransfer
-     * @param \Generated\Shared\Transfer\QuoteTransfer $quoteTransfer
-     *
-     * @return \Generated\Shared\Transfer\QuoteTransfer
-     */
     public function expandQuoteCustomerWithCompanyUserFromCheckoutRequest(
         RestCheckoutRequestAttributesTransfer $restCheckoutRequestAttributesTransfer,
         QuoteTransfer $quoteTransfer
@@ -69,11 +55,6 @@ class CompanyUserExpander implements CompanyUserExpanderInterface
         return $quoteTransfer;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CustomerTransfer $customerTransfer
-     *
-     * @return bool
-     */
     protected function isCompanyUser(CustomerTransfer $customerTransfer): bool
     {
         return $customerTransfer->getCompanyUserTransfer()

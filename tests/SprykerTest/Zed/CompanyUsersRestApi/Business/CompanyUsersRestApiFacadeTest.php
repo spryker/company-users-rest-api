@@ -35,9 +35,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
      */
     protected $tester;
 
-    /**
-     * @return void
-     */
     public function testExpandCustomerIdentifierWhereCustomerSetCompanyUser(): void
     {
         // Assign
@@ -61,9 +58,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         $this->assertSame($customerTransfer->getCompanyUserTransfer()->getUuid(), $expandedCustomerIdentifierTransfer->getIdCompanyUser());
     }
 
-    /**
-     * @return void
-     */
     public function testExpandCustomerIdentifierWhereCustomerNotSetCompanyUser(): void
     {
         // Assign
@@ -79,9 +73,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         $this->assertNull($expandedCustomerIdentifierTransfer->getIdCompanyUser());
     }
 
-    /**
-     * @return void
-     */
     public function testGetCompanyUserCollectionWillReturnCollectionOfCompanyUsers(): void
     {
         // Assign
@@ -118,9 +109,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         $this->assertSame($companyUserTransfer->getFkCustomer(), $expectedCompanyUserTransfer->getFkCustomer());
     }
 
-    /**
-     * @return void
-     */
     public function testGetCompanyUserCollectionWillReturnEmptyCollectionWhenCompanyUsersNotFound(): void
     {
         // Assign
@@ -137,9 +125,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         $this->assertCount(0, $companyUserCollectionTransfer->getCompanyUsers());
     }
 
-    /**
-     * @return void
-     */
     public function testExpandQuoteCustomerWithCompanyUserWillExpandCompanyUser(): void
     {
         // Assign
@@ -178,9 +163,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         );
     }
 
-    /**
-     * @return void
-     */
     public function testExpandQuoteCustomerWithCompanyUserWillSkipNotCompanyUser(): void
     {
         // Assign
@@ -198,9 +180,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         );
     }
 
-    /**
-     * @return void
-     */
     public function testExpandQuoteCustomerWithCompanyUserWillSkipCompanyUserWithoutId(): void
     {
         // Assign
@@ -225,9 +204,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         );
     }
 
-    /**
-     * @return void
-     */
     public function testMapCompanyUserToQuoteTransferWillExpandCompanyUser(): void
     {
         // Assign
@@ -272,9 +248,6 @@ class CompanyUsersRestApiFacadeTest extends Unit
         );
     }
 
-    /**
-     * @return void
-     */
     public function testMapCompanyUserToQuoteTransferWillSkipNotCompanyUser(): void
     {
         // Arrange

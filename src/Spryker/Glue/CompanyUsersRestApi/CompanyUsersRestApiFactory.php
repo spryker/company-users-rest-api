@@ -32,9 +32,6 @@ use Spryker\Glue\Kernel\AbstractFactory;
  */
 class CompanyUsersRestApiFactory extends AbstractFactory
 {
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\CompanyUser\CompanyUserReaderInterface
-     */
     public function createCompanyUserReader(): CompanyUserReaderInterface
     {
         return new CompanyUserReader(
@@ -45,9 +42,6 @@ class CompanyUsersRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\RestResponseBuilder\CompanyUserRestResponseBuilderInterface
-     */
     public function createCompanyUserRestResponseBuilder(): CompanyUserRestResponseBuilderInterface
     {
         return new CompanyUserRestResponseBuilder(
@@ -56,25 +50,16 @@ class CompanyUsersRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\Mapper\CompanyUserMapperInterface
-     */
     public function createCompanyUserMapper(): CompanyUserMapperInterface
     {
         return new CompanyUserMapper();
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\Customer\CustomerExpanderInterface
-     */
     public function createCustomerExpander(): CustomerExpanderInterface
     {
         return new CustomerExpander();
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\CompanyUser\Relationship\CompanyUserResourceRelationshipExpanderInterface
-     */
     public function createCompanyUserByShareDetailResourceRelationshipExpander(): CompanyUserResourceRelationshipExpanderInterface
     {
         return new CompanyUserByShareDetailResourceRelationshipExpander(
@@ -83,9 +68,6 @@ class CompanyUsersRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\CompanyUser\Relationship\CompanyUserResourceRelationshipExpanderInterface
-     */
     public function createCompanyUserByQuoteRequestResourceRelationshipExpander(): CompanyUserResourceRelationshipExpanderInterface
     {
         return new CompanyUserByQuoteRequestResourceRelationshipExpander(
@@ -94,9 +76,6 @@ class CompanyUsersRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\CompanyUser\CompanyUserValidatorInterface
-     */
     public function createCompanyUserValidator(): CompanyUserValidatorInterface
     {
         return new CompanyUserValidator(
@@ -104,25 +83,16 @@ class CompanyUsersRestApiFactory extends AbstractFactory
         );
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Processor\Expander\CheckoutRequestExpanderInterface
-     */
     public function createCheckoutRequestExpander(): CheckoutRequestExpanderInterface
     {
         return new CheckoutRequestExpander();
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Dependency\Client\CompanyUsersRestApiToCompanyUserClientInterface
-     */
     public function getCompanyUserClient(): CompanyUsersRestApiToCompanyUserClientInterface
     {
         return $this->getProvidedDependency(CompanyUsersRestApiDependencyProvider::CLIENT_COMPANY_USER);
     }
 
-    /**
-     * @return \Spryker\Glue\CompanyUsersRestApi\Dependency\Client\CompanyUsersRestApiToCompanyUserStorageClientInterface
-     */
     public function getCompanyUserStorageClient(): CompanyUsersRestApiToCompanyUserStorageClientInterface
     {
         return $this->getProvidedDependency(CompanyUsersRestApiDependencyProvider::CLIENT_COMPANY_USER_STORAGE);

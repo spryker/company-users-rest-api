@@ -19,19 +19,11 @@ class CompanyUserValidator implements CompanyUserValidatorInterface
      */
     protected $config;
 
-    /**
-     * @param \Spryker\Glue\CompanyUsersRestApi\CompanyUsersRestApiConfig $config
-     */
     public function __construct(CompanyUsersRestApiConfig $config)
     {
         $this->config = $config;
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return \Generated\Shared\Transfer\RestErrorMessageTransfer|null
-     */
     public function validate(RestRequestInterface $restRequest): ?RestErrorMessageTransfer
     {
         if (!$this->isCompanyUserResource($restRequest)) {
@@ -48,11 +40,6 @@ class CompanyUserValidator implements CompanyUserValidatorInterface
             ->setStatus(Response::HTTP_BAD_REQUEST);
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return bool
-     */
     protected function isCompanyUserResource(RestRequestInterface $restRequest): bool
     {
         return in_array(
@@ -62,11 +49,6 @@ class CompanyUserValidator implements CompanyUserValidatorInterface
         );
     }
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\Request\Data\RestRequestInterface $restRequest
-     *
-     * @return bool
-     */
     protected function isCompanyUser(RestRequestInterface $restRequest): bool
     {
         $restUserTransfer = $restRequest->getRestUser();

@@ -14,17 +14,11 @@ use Spryker\Client\Kernel\AbstractFactory;
 
 class CompanyUsersRestApiFactory extends AbstractFactory
 {
-    /**
-     * @return \Spryker\Client\CompanyUsersRestApi\Zed\CompanyUsersRestApiStubInterface
-     */
     public function createCompanyUsersRestApiStub(): CompanyUsersRestApiStubInterface
     {
         return new CompanyUsersRestApiStub($this->getZedRequestClient());
     }
 
-    /**
-     * @return \Spryker\Client\CompanyUsersRestApi\Dependency\Client\CompanyUsersRestApiToZedRequestClientInterface
-     */
     public function getZedRequestClient(): CompanyUsersRestApiToZedRequestClientInterface
     {
         return $this->getProvidedDependency(CompanyUsersRestApiDependencyProvider::CLIENT_ZED_REQUEST);

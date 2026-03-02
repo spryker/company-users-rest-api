@@ -11,10 +11,5 @@ use Generated\Shared\Transfer\CompanyUserTransfer;
 
 interface CompanyUsersRestApiToCompanyUserFacadeInterface
 {
-    /**
-     * @param int $idCompanyUser
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
-     */
     public function findCompanyUserById(int $idCompanyUser): ?CompanyUserTransfer;
 }

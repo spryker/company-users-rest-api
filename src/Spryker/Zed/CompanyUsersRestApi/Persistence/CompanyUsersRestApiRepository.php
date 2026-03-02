@@ -88,12 +88,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyRole->find();
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function applyFilters(
         SpyCompanyUserQuery $queryCompanyUser,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -107,12 +101,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyUser;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function applyByFkCompany(
         SpyCompanyUserQuery $queryCompanyUser,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -124,12 +112,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyUser;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function applyByCompanyUserIdsIn(
         SpyCompanyUserQuery $queryCompanyUser,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -141,12 +123,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyUser;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function applyByIsActive(
         SpyCompanyUserQuery $queryCompanyUser,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -158,12 +134,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyUser;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function applyByCompanyBusinessUnitUuidsIn(
         SpyCompanyUserQuery $queryCompanyUser,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -177,12 +147,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyUser;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function applyByCompanyRolesUuidsIn(
         SpyCompanyUserQuery $queryCompanyUser,
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
@@ -199,12 +163,6 @@ class CompanyUsersRestApiRepository extends AbstractRepository implements Compan
         return $queryCompanyUser;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery $queryCompanyUser
-     * @param \Generated\Shared\Transfer\FilterTransfer|null $filterTransfer
-     *
-     * @return \Orm\Zed\CompanyUser\Persistence\SpyCompanyUserQuery
-     */
     protected function setQueryFilters(
         SpyCompanyUserQuery $queryCompanyUser,
         ?FilterTransfer $filterTransfer

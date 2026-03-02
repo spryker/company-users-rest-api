@@ -18,19 +18,11 @@ class CompanyUserReader implements CompanyUserReaderInterface
      */
     protected $companyUserRestApiRepository;
 
-    /**
-     * @param \Spryker\Zed\CompanyUsersRestApi\Persistence\CompanyUsersRestApiRepositoryInterface $companyUserRestApiRepository
-     */
     public function __construct(CompanyUsersRestApiRepositoryInterface $companyUserRestApiRepository)
     {
         $this->companyUserRestApiRepository = $companyUserRestApiRepository;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCollectionTransfer
-     */
     public function getCompanyUserCollection(
         CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
     ): CompanyUserCollectionTransfer {

@@ -24,11 +24,6 @@ class CompanyUsersRestApiToCompanyUserFacadeBridge implements CompanyUsersRestAp
         $this->companyUserFacade = $companyUserFacade;
     }
 
-    /**
-     * @param int $idCompanyUser
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer|null
-     */
     public function findCompanyUserById(int $idCompanyUser): ?CompanyUserTransfer
     {
         return $this->companyUserFacade->findCompanyUserById($idCompanyUser);

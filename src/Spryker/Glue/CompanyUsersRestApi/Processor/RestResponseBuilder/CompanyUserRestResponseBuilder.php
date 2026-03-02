@@ -30,10 +30,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
      */
     protected CompanyUserMapperInterface $companyUserMapper;
 
-    /**
-     * @param \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceBuilderInterface $restResourceBuilder
-     * @param \Spryker\Glue\CompanyUsersRestApi\Processor\Mapper\CompanyUserMapperInterface $companyUserMapper
-     */
     public function __construct(
         RestResourceBuilderInterface $restResourceBuilder,
         CompanyUserMapperInterface $companyUserMapper
@@ -42,11 +38,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
         $this->companyUserMapper = $companyUserMapper;
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserResponse(CompanyUserTransfer $companyUserTransfer): RestResponseInterface
     {
         $companyUserRestResource = $this->createCompanyUserResource($companyUserTransfer);
@@ -56,13 +47,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
             ->addResource($companyUserRestResource);
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserCollectionTransfer $companyUserCollectionTransfer
-     * @param int $totalItems
-     * @param int $limit
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserCollectionResponse(
         CompanyUserCollectionTransfer $companyUserCollectionTransfer,
         int $totalItems = 0,
@@ -81,13 +65,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
         return $restResponse;
     }
 
-    /**
-     * @param string $companyUserUuid
-     * @param \Generated\Shared\Transfer\RestCompanyUserAttributesTransfer $restCompanyUserAttributesTransfer
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface
-     */
     public function createCompanyUsersRestResource(
         string $companyUserUuid,
         RestCompanyUserAttributesTransfer $restCompanyUserAttributesTransfer,
@@ -104,9 +81,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
         return $companyUserRestResource;
     }
 
-    /**
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserNotSelectedErrorResponse(): RestResponseInterface
     {
         $restErrorMessageTransfer = (new RestErrorMessageTransfer())
@@ -117,9 +91,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
         return $this->restResourceBuilder->createRestResponse()->addError($restErrorMessageTransfer);
     }
 
-    /**
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserNotFoundErrorResponse(): RestResponseInterface
     {
         $restErrorMessageTransfer = (new RestErrorMessageTransfer())
@@ -130,11 +101,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
         return $this->restResourceBuilder->createRestResponse()->addError($restErrorMessageTransfer);
     }
 
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResourceInterface
-     */
     protected function createCompanyUserResource(CompanyUserTransfer $companyUserTransfer): RestResourceInterface
     {
         $restCompanyUserAttributesTransfer = $this->companyUserMapper
@@ -154,9 +120,6 @@ class CompanyUserRestResponseBuilder implements CompanyUserRestResponseBuilderIn
         return $restResource;
     }
 
-    /**
-     * @return \Spryker\Glue\GlueApplication\Rest\JsonApi\RestResponseInterface
-     */
     public function createCompanyUserHasNoPermissionErrorResponse(): RestResponseInterface
     {
         $restErrorMessageTransfer = (new RestErrorMessageTransfer())

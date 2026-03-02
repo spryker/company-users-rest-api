@@ -17,12 +17,6 @@ use Propel\Runtime\Map\TableMap;
 
 class CompanyUsersRestApiMapper
 {
-    /**
-     * @param \Propel\Runtime\Collection\Collection $companyUserCollection
-     * @param \Generated\Shared\Transfer\CompanyUserCollectionTransfer $companyUserCollectionTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCollectionTransfer
-     */
     public function mapCompanyUserEntitiesToCompanyUserCollectionTransfer(
         Collection $companyUserCollection,
         CompanyUserCollectionTransfer $companyUserCollectionTransfer
@@ -39,12 +33,6 @@ class CompanyUsersRestApiMapper
         return $companyUserCollectionTransfer;
     }
 
-    /**
-     * @param \Propel\Runtime\Collection\Collection $companyRoleCollection
-     * @param \Generated\Shared\Transfer\CompanyUserCollectionTransfer $companyUserCollectionTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserCollectionTransfer
-     */
     public function mapCompanyRoleCollectionTransferToCompanyUserCollection(
         Collection $companyRoleCollection,
         CompanyUserCollectionTransfer $companyUserCollectionTransfer
@@ -66,12 +54,6 @@ class CompanyUsersRestApiMapper
         return $companyUserCollectionTransfer;
     }
 
-    /**
-     * @param \Orm\Zed\CompanyUser\Persistence\SpyCompanyUser $companyUserEntity
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     *
-     * @return \Generated\Shared\Transfer\CompanyUserTransfer
-     */
     protected function mapCompanyUserEntityToCompanyUserTransfer(
         SpyCompanyUser $companyUserEntity,
         CompanyUserTransfer $companyUserTransfer

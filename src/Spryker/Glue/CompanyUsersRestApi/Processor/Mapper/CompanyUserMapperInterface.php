@@ -12,12 +12,6 @@ use Generated\Shared\Transfer\RestCompanyUserAttributesTransfer;
 
 interface CompanyUserMapperInterface
 {
-    /**
-     * @param \Generated\Shared\Transfer\CompanyUserTransfer $companyUserTransfer
-     * @param \Generated\Shared\Transfer\RestCompanyUserAttributesTransfer $restCompanyUserAttributesTransfer
-     *
-     * @return \Generated\Shared\Transfer\RestCompanyUserAttributesTransfer
-     */
     public function mapCompanyUserTransferToRestCompanyUserAttributesTransfer(
         CompanyUserTransfer $companyUserTransfer,
         RestCompanyUserAttributesTransfer $restCompanyUserAttributesTransfer

@@ -33,11 +33,6 @@ class CompanyUsersRestApiDependencyProvider extends AbstractBundleDependencyProv
      */
     public const FACADE_COMPANY_USER = 'FACADE_COMPANY_USER';
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     public function provideBusinessLayerDependencies(Container $container): Container
     {
         $container = parent::provideBusinessLayerDependencies($container);
@@ -46,11 +41,6 @@ class CompanyUsersRestApiDependencyProvider extends AbstractBundleDependencyProv
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     public function providePersistenceLayerDependencies(Container $container): Container
     {
         $container = parent::providePersistenceLayerDependencies($container);
@@ -60,11 +50,6 @@ class CompanyUsersRestApiDependencyProvider extends AbstractBundleDependencyProv
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addCompanyUserPropelQuery(Container $container): Container
     {
         $container->set(static::PROPEL_QUERY_COMPANY_USER, $container->factory(function () {
@@ -74,11 +59,6 @@ class CompanyUsersRestApiDependencyProvider extends AbstractBundleDependencyProv
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addCompanyRolePropelQuery(Container $container): Container
     {
         $container->set(static::PROPEL_QUERY_COMPANY_ROLE, $container->factory(function () {
@@ -88,11 +68,6 @@ class CompanyUsersRestApiDependencyProvider extends AbstractBundleDependencyProv
         return $container;
     }
 
-    /**
-     * @param \Spryker\Zed\Kernel\Container $container
-     *
-     * @return \Spryker\Zed\Kernel\Container
-     */
     protected function addCompanyUserFacade(Container $container): Container
     {
         $container->set(static::FACADE_COMPANY_USER, function (Container $container) {
