@@ -24,11 +24,15 @@
         "spryker/zed-request": "^3.0.0"
     },
     "require-dev": {
+        "spryker/api-platform": "*",
         "spryker/code-sniffer": "*",
         "spryker/container": "*",
         "spryker/propel": "*",
         "spryker/store": "*",
         "spryker/testify": "*"
+    },
+    "suggest": {
+        "spryker/api-platform": "ADD SUGGEST DESCRIPTION"
     },
     "autoload": {
         "psr-4": {
