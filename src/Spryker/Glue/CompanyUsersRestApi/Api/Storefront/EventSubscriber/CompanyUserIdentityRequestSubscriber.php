@@ -13,6 +13,7 @@ use Generated\Shared\Transfer\CompanyUserTransfer;
 use Generated\Shared\Transfer\CustomerTransfer;
 use Spryker\ApiPlatform\Attribute\ApiType;
 use Spryker\ApiPlatform\EventSubscriber\IdentityRequestSubscriber;
+use Spryker\Client\CompanyUserStorage\CompanyUserStorageClientInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -25,6 +26,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
  * Knowledge of company-user-specific claim keys lives here, not in the generic API Platform
  * layer or in CustomersRestApi. Runs at lower priority than the customer subscriber so the
  * parent CustomerTransfer is already available on the request.
+ *
+ * After building the transfer from the claim UUID the subscriber enriches it with `fkCompany`
+ * by looking up the company user in storage. A missing storage record is non-fatal — the
+ * transfer is attached with only the uuid, matching the previous behaviour.
  */
 #[ApiType(types: ['storefront'])]
 class CompanyUserIdentityRequestSubscriber implements EventSubscriberInterface
@@ -33,7 +38,13 @@ class CompanyUserIdentityRequestSubscriber implements EventSubscriberInterface
 
     protected const string KEY_COMPANY_USER_ID = 'id_company_user';
 
+    protected const string MAPPING_TYPE_UUID = 'uuid';
+
     protected const int PRIORITY_AFTER_CUSTOMER = 5;
+
+    public function __construct(protected CompanyUserStorageClientInterface $companyUserStorageClient)
+    {
+    }
 
     /**
      * @return array<string, array{string, int}>
@@ -59,8 +70,18 @@ class CompanyUserIdentityRequestSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $customerTransfer->setCompanyUserTransfer(
-            (new CompanyUserTransfer())->setUuid((string)$claims[static::KEY_COMPANY_USER_ID]),
+        $uuid = (string)$claims[static::KEY_COMPANY_USER_ID];
+        $companyUserTransfer = (new CompanyUserTransfer())->setUuid($uuid);
+
+        $companyUserStorageTransfer = $this->companyUserStorageClient->findCompanyUserByMapping(
+            static::MAPPING_TYPE_UUID,
+            $uuid,
         );
+
+        if ($companyUserStorageTransfer !== null) {
+            $companyUserTransfer->setFkCompany($companyUserStorageTransfer->getIdCompany());
+        }
+
+        $customerTransfer->setCompanyUserTransfer($companyUserTransfer);
     }
 }
