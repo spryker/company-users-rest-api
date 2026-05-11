@@ -42,8 +42,9 @@ class CompanyUserIdentityRequestSubscriber implements EventSubscriberInterface
 
     protected const int PRIORITY_AFTER_CUSTOMER = 5;
 
-    public function __construct(protected CompanyUserStorageClientInterface $companyUserStorageClient)
-    {
+    public function __construct(
+        protected CompanyUserStorageClientInterface $companyUserStorageClient,
+    ) {
     }
 
     /**
@@ -70,16 +71,20 @@ class CompanyUserIdentityRequestSubscriber implements EventSubscriberInterface
             return;
         }
 
-        $uuid = (string)$claims[static::KEY_COMPANY_USER_ID];
-        $companyUserTransfer = (new CompanyUserTransfer())->setUuid($uuid);
+        $companyUserUuid = (string)$claims[static::KEY_COMPANY_USER_ID];
+        $companyUserTransfer = (new CompanyUserTransfer())->setUuid($companyUserUuid);
 
-        $companyUserStorageTransfer = $this->companyUserStorageClient->findCompanyUserByMapping(
-            static::MAPPING_TYPE_UUID,
-            $uuid,
-        );
+        // The OAuth `id_company_user` claim carries the company user UUID. Resolve it to the
+        // integer `idCompanyUser` so downstream Zed plugins (e.g. SharedCart `DeactivateSharedQuotesBeforeQuoteSavePlugin`,
+        // QuotePermissionChecker for shared cart access) that expect `int` get a usable value.
+        $companyUserStorageTransfer = $this->companyUserStorageClient
+            ->findCompanyUserByMapping(static::MAPPING_TYPE_UUID, $companyUserUuid);
 
         if ($companyUserStorageTransfer !== null) {
-            $companyUserTransfer->setFkCompany($companyUserStorageTransfer->getIdCompany());
+            $companyUserTransfer
+                ->setIdCompanyUser($companyUserStorageTransfer->getIdCompanyUser())
+                ->setFkCompany($companyUserStorageTransfer->getIdCompany())
+                ->setFkCompanyBusinessUnit($companyUserStorageTransfer->getIdCompanyBusinessUnit());
         }
 
         $customerTransfer->setCompanyUserTransfer($companyUserTransfer);
