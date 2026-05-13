@@ -1,0 +1,60 @@
+resource:
+    name: CompanyUsers
+    shortName: company-users
+    description: 'Company user information for authenticated company users'
+
+    provider: Spryker\Glue\CompanyUsersRestApi\Api\Storefront\Provider\CompanyUsersStorefrontProvider
+
+    paginationEnabled: false
+
+    security: "is_granted('ROLE_CUSTOMER')"
+
+    operations:
+        # BC: legacy `GET /company-users/{uuid}` returned a single-item envelope.
+        # `/company-users/` (trailing slash, empty `{uuid}`) matches this route in API Platform —
+        # the Provider re-emits the legacy `403 + 1403 "Current company user is not set..."`
+        # response for that case (Symfony inline-regex on `{uuid}` is not honoured by API Platform).
+        - type: Get
+          name: getCompanyUserByUuid
+          uriTemplate: '/company-users/{uuid}'
+          description: 'Retrieve a specific company user by UUID. The company user must belong to the same company as the authenticated company user.'
+          openapiContext:
+              responses:
+                  200:
+                      description: 'Company user returned.'
+                  401:
+                      description: 'Missing or invalid access token.'
+                  403:
+                      description: 'Authenticated customer has no active company user session — only emitted for the legacy `/company-users/` shorthand (code 1403).'
+                  404:
+                      description: "Company user not found, or does not belong to the authenticated user's company (code 1404)."
+
+    properties:
+        # `uuid` is the JSON:API resource id (`data.id`), not an attribute.
+        uuid:
+            type: string
+            identifier: true
+            writable: false
+            readable: false
+            required: false
+            description: 'Unique company user identifier'
+            openapiContext:
+                example: 'f9c64276-a8b9-57f1-8fb3-a19c045dc85e'
+
+        isActive:
+            type: boolean
+            writable: false
+            readable: true
+            required: false
+            description: 'Whether the company user is active'
+            openapiContext:
+                example: true
+
+        isDefault:
+            type: boolean
+            writable: false
+            readable: true
+            required: false
+            description: 'Whether the company user is the default one for the customer'
+            openapiContext:
+                example: false

@@ -32,7 +32,7 @@
         "spryker/testify": "*"
     },
     "suggest": {
-        "spryker/api-platform": "ADD SUGGEST DESCRIPTION"
+        "spryker/api-platform": "Required when the API Platform want to be used"
     },
     "autoload": {
         "psr-4": {
