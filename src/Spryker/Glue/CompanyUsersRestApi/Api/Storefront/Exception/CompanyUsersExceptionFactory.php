@@ -15,15 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CompanyUsersExceptionFactory
 {
-    public function createCompanyUserNotFoundException(): GlueApiException
-    {
-        return new GlueApiException(
-            Response::HTTP_NOT_FOUND,
-            CompanyUsersRestApiConfig::RESPONSE_CODE_COMPANY_USER_NOT_FOUND,
-            CompanyUsersRestApiConfig::RESPONSE_DETAIL_COMPANY_USER_NOT_FOUND,
-        );
-    }
-
     /**
      * Mirrors the legacy `CompanyUserRestResponseBuilder::createCompanyUserNotSelectedErrorResponse`
      * — emitted when the request hits `/company-users/` (trailing-slash, empty `{uuid}`) without
@@ -35,6 +26,24 @@ class CompanyUsersExceptionFactory
             Response::HTTP_FORBIDDEN,
             CompanyUsersRestApiConfig::RESPONSE_CODE_COMPANY_USER_NOT_SELECTED,
             CompanyUsersRestApiConfig::RESPONSE_DETAIL_COMPANY_USER_NOT_SELECTED,
+        );
+    }
+
+    public function createCompanyUserNotFoundException(): GlueApiException
+    {
+        return new GlueApiException(
+            Response::HTTP_NOT_FOUND,
+            CompanyUsersRestApiConfig::RESPONSE_CODE_COMPANY_USER_NOT_FOUND,
+            CompanyUsersRestApiConfig::RESPONSE_DETAIL_COMPANY_USER_NOT_FOUND,
+        );
+    }
+
+    public function createCompanyUserHasNoPermissionException(): GlueApiException
+    {
+        return new GlueApiException(
+            Response::HTTP_FORBIDDEN,
+            CompanyUsersRestApiConfig::RESPONSE_CODE_COMPANY_USER_HAS_NO_PERMISSION,
+            CompanyUsersRestApiConfig::RESPONSE_DETAIL_COMPANY_USER_HAS_NO_PERMISSION,
         );
     }
 }

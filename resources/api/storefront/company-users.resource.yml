@@ -5,19 +5,22 @@ resource:
 
     provider: Spryker\Glue\CompanyUsersRestApi\Api\Storefront\Provider\CompanyUsersStorefrontProvider
 
-    paginationEnabled: false
+    paginationEnabled: true
 
-    security: "is_granted('ROLE_CUSTOMER')"
+    security: "is_granted('ROLE_CUSTOMER') or is_granted('ROLE_COMPANY_USER')"
 
     operations:
-        # BC: legacy `GET /company-users/{uuid}` returned a single-item envelope.
-        # `/company-users/` (trailing slash, empty `{uuid}`) matches this route in API Platform —
-        # the Provider re-emits the legacy `403 + 1403 "Current company user is not set..."`
-        # response for that case (Symfony inline-regex on `{uuid}` is not honoured by API Platform).
+        # BC: legacy `GET /company-users/mine` returned a JSON:API collection envelope.
+        # Declared before `/company-users/{uuid}` so the literal route wins over the parameterised one.
+        - type: GetCollection
+          name: getCompanyUsersMine
+          uriTemplate: '/company-users/mine'
+          description: 'Retrieve all active company users of the authenticated customer.'
+
         - type: Get
           name: getCompanyUserByUuid
           uriTemplate: '/company-users/{uuid}'
-          description: 'Retrieve a specific company user by UUID. The company user must belong to the same company as the authenticated company user.'
+          description: 'Retrieve a specific company user by UUID. Must belong to the current company; requires SeeCompanyUsers permission.'
           openapiContext:
               responses:
                   200:
@@ -28,6 +31,28 @@ resource:
                       description: 'Authenticated customer has no active company user session — only emitted for the legacy `/company-users/` shorthand (code 1403).'
                   404:
                       description: "Company user not found, or does not belong to the authenticated user's company (code 1404)."
+
+        - type: GetCollection
+          name: getCompanyUserCollection
+          uriTemplate: '/company-users'
+          description: 'Retrieve company users of the current company. Supports filter[company-business-units]=<uuid> and filter[company-roles]=<uuid>; both can be repeated.'
+
+    includes:
+        - relationshipName: companies
+          targetResource: Companies
+          resolverClass: Spryker\Glue\CompaniesRestApi\Api\Storefront\Relationship\CompaniesRelationshipResolver
+
+        - relationshipName: company-business-units
+          targetResource: CompanyBusinessUnits
+          resolverClass: Spryker\Glue\CompanyBusinessUnitsRestApi\Api\Storefront\Relationship\CompanyBusinessUnitsRelationshipResolver
+
+        - relationshipName: company-roles
+          targetResource: CompanyRoles
+          resolverClass: Spryker\Glue\CompanyRolesRestApi\Api\Storefront\Relationship\CompanyRolesRelationshipResolver
+
+        - relationshipName: customers
+          targetResource: Customers
+          resolverClass: Spryker\Glue\CustomersRestApi\Api\Storefront\Relationship\CustomersRelationshipResolver
 
     properties:
         # `uuid` is the JSON:API resource id (`data.id`), not an attribute.
@@ -58,3 +83,33 @@ resource:
             description: 'Whether the company user is the default one for the customer'
             openapiContext:
                 example: false
+
+        idCompany:
+            type: integer
+            writable: false
+            readable: false
+            description: 'Internal FK used by relationship resolvers; not part of the public attribute set.'
+
+        idCompanyBusinessUnit:
+            type: integer
+            writable: false
+            readable: false
+            description: 'Internal FK used by relationship resolvers; not part of the public attribute set.'
+
+        idCompanyUser:
+            type: integer
+            writable: false
+            readable: false
+            description: 'Internal FK used by relationship resolvers; not part of the public attribute set.'
+
+        customerReference:
+            type: string
+            writable: false
+            readable: false
+            description: 'Internal FK used by relationship resolvers; not part of the public attribute set.'
+
+        customerTransferData:
+            type: object
+            writable: false
+            readable: false
+            description: 'Internal carrier: CustomerTransfer::toArray() payload used by CustomersRelationshipResolver to avoid N+1 client calls.'

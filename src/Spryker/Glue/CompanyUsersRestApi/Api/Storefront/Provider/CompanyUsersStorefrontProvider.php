@@ -10,92 +10,220 @@ declare(strict_types=1);
 namespace Spryker\Glue\CompanyUsersRestApi\Api\Storefront\Provider;
 
 use Generated\Api\Storefront\CompanyUsersStorefrontResource;
+use Generated\Shared\Transfer\CompanyUserCriteriaFilterTransfer;
 use Generated\Shared\Transfer\CompanyUserTransfer;
+use Generated\Shared\Transfer\CustomerTransfer;
+use Generated\Shared\Transfer\FilterTransfer;
 use Spryker\ApiPlatform\State\Provider\AbstractStorefrontProvider;
 use Spryker\Client\CompanyUser\CompanyUserClientInterface;
+use Spryker\Client\CompanyUsersRestApi\CompanyUsersRestApiClientInterface;
 use Spryker\Client\CompanyUserStorage\CompanyUserStorageClientInterface;
 use Spryker\Glue\CompanyUsersRestApi\Api\Storefront\Exception\CompanyUsersExceptionFactory;
-use Spryker\Glue\CompanyUsersRestApi\Api\Storefront\Mapper\CompanyUserResourceMapper;
+use Spryker\Glue\CompanyUsersRestApi\Api\Storefront\Mapper\CompanyUsersResourceMapperInterface;
+use Spryker\Glue\Kernel\PermissionAwareTrait;
+use Spryker\Service\Serializer\SerializerServiceInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-/**
- * Partial API Platform migration: only `GET /company-users/{uuid}` is served from here.
- * Mutating operations and the collection endpoint remain on the legacy Glue REST stack.
- *
- * Lookup flow mirrors legacy {@see \Spryker\Glue\CompanyUsersRestApi\Processor\CompanyUser\CompanyUserReader::getCompanyUser}:
- *
- *   1. resolve `uuid` → `idCompanyUser` via `CompanyUserStorageClient::findCompanyUserByMapping`
- *   2. hydrate full `CompanyUserTransfer` (including `company`) via `CompanyUserClient::getCompanyUserById`
- *   3. enforce ownership: the resolved company must equal the authenticated customer's company
- *
- * Both failure paths collapse to 404 (legacy 1404), avoiding existence-leak via 403.
- */
 class CompanyUsersStorefrontProvider extends AbstractStorefrontProvider
 {
+    use PermissionAwareTrait;
+
+    protected const string KEY_UUID = 'uuid';
+
     protected const string MAPPING_TYPE_UUID = 'uuid';
 
+    protected const string OPERATION_NAME_GET_COMPANY_USERS_MINE = 'getCompanyUsersMine';
+
+    protected const string FILTER_KEY = 'filter';
+
+    protected const string FILTER_KEY_COMPANY_BUSINESS_UNITS = 'company-business-units';
+
+    protected const string FILTER_KEY_COMPANY_ROLES = 'company-roles';
+
+    protected const string PERMISSION_SEE_COMPANY_USERS = 'SeeCompanyUsersPermissionPlugin';
+
+    // BC: legacy applied no default limit — 0 means "return all" in Propel queries.
+    protected const int DEFAULT_COLLECTION_LIMIT = 0;
+
     public function __construct(
-        protected CompanyUserStorageClientInterface $companyUserStorageClient,
         protected CompanyUserClientInterface $companyUserClient,
-        protected CompanyUserResourceMapper $companyUserResourceMapper,
-        protected CompanyUsersExceptionFactory $exceptionFactory,
+        protected CompanyUsersRestApiClientInterface $companyUsersRestApiClient,
+        protected CompanyUserStorageClientInterface $companyUserStorageClient,
+        protected CompanyUsersExceptionFactory $companyUsersExceptionFactory,
+        protected CompanyUsersResourceMapperInterface $companyUsersResourceMapper,
+        protected SerializerServiceInterface $serializer,
     ) {
     }
 
-    /**
-     * @throws \Spryker\ApiPlatform\Exception\GlueApiException
-     */
     protected function provideItem(): ?object
     {
-        $uuid = $this->getUriVariables()['uuid'] ?? null;
-
-        // BC: `/company-users/` (trailing slash, empty `{uuid}`) is the legacy collection shorthand
-        // that returned `403 + 1403 "Current company user is not set..."` for a non-company-user
-        // session. The Symfony inline-regex `<.+>` on the route is not enforced by API Platform's
-        // routing, so we replay that response here.
-        if ($uuid === null || $uuid === '') {
-            throw $this->exceptionFactory->createCompanyUserNotSelectedException();
+        if (!$this->hasCustomer()) {
+            throw new AccessDeniedException();
         }
 
-        $companyUserStorageTransfer = $this->companyUserStorageClient
-            ->findCompanyUserByMapping(static::MAPPING_TYPE_UUID, $uuid);
-
-        if ($companyUserStorageTransfer === null) {
-            throw $this->exceptionFactory->createCompanyUserNotFoundException();
-        }
-
-        $companyUserTransfer = $this->companyUserClient->getCompanyUserById(
-            (new CompanyUserTransfer())->setIdCompanyUser($companyUserStorageTransfer->getIdCompanyUser()),
-        );
-
-        if (!$this->isAuthenticatedCustomerInSameCompany($companyUserTransfer)) {
-            throw $this->exceptionFactory->createCompanyUserNotFoundException();
-        }
-
-        return CompanyUsersStorefrontResource::fromArray(
-            $this->companyUserResourceMapper->mapCompanyUserTransferToResourceData($companyUserTransfer),
-        );
+        return $this->provideCompanyUserByUuid((string)$this->getUriVariable(static::KEY_UUID));
     }
 
     /**
-     * Ownership check — the resolved company user must be a peer of the authenticated company
-     * user (same `idCompany`). A logged-in customer without a selected company user is treated
-     * the same as an outsider → 404.
+     * @throws \Symfony\Component\Security\Core\Exception\AccessDeniedException
+     *
+     * @return array<\Generated\Api\Storefront\CompanyUsersStorefrontResource>
      */
-    protected function isAuthenticatedCustomerInSameCompany(CompanyUserTransfer $companyUserTransfer): bool
+    protected function provideCollection(): array
     {
         if (!$this->hasCustomer()) {
-            return false;
+            throw new AccessDeniedException();
         }
 
-        $authenticatedCompanyUserTransfer = $this->getCustomer()->getCompanyUserTransfer();
-
-        if ($authenticatedCompanyUserTransfer === null) {
-            return false;
+        if ($this->getOperation()->getName() === static::OPERATION_NAME_GET_COMPANY_USERS_MINE) {
+            return $this->provideMyCompanyUsers();
         }
 
-        $authenticatedIdCompany = $authenticatedCompanyUserTransfer->getFkCompany();
-        $resolvedIdCompany = $companyUserTransfer->getCompany()?->getIdCompany();
+        return $this->provideCompanyUserCollection();
+    }
 
-        return $authenticatedIdCompany !== null && $authenticatedIdCompany === $resolvedIdCompany;
+    /**
+     * @return array<\Generated\Api\Storefront\CompanyUsersStorefrontResource>
+     */
+    protected function provideMyCompanyUsers(): array
+    {
+        $companyUserCollectionTransfer = $this->companyUserClient->getActiveCompanyUsersByCustomerReference(
+            (new CustomerTransfer())->setCustomerReference($this->getCustomerReference()),
+        );
+
+        $resources = [];
+
+        foreach ($companyUserCollectionTransfer->getCompanyUsers() as $companyUserTransfer) {
+            $resources[] = $this->denormalizeToResource($companyUserTransfer);
+        }
+
+        return $resources;
+    }
+
+    protected function provideCompanyUserByUuid(string $uuid): CompanyUsersStorefrontResource
+    {
+        $idCompany = $this->getCurrentUserCompanyId();
+        $this->assertCanSeeCompanyUsers();
+
+        $companyUserTransfer = $this->findCompanyUserByUuid($uuid);
+
+        if ($companyUserTransfer === null || $companyUserTransfer->getCompany() === null) {
+            throw $this->companyUsersExceptionFactory->createCompanyUserNotFoundException();
+        }
+
+        if ($companyUserTransfer->getCompany()->getIdCompany() !== $idCompany) {
+            throw $this->companyUsersExceptionFactory->createCompanyUserNotSelectedException();
+        }
+
+        return $this->denormalizeToResource($companyUserTransfer);
+    }
+
+    /**
+     * @return array<\Generated\Api\Storefront\CompanyUsersStorefrontResource>
+     */
+    protected function provideCompanyUserCollection(): array
+    {
+        $idCompany = $this->getCurrentUserCompanyId();
+        $this->assertCanSeeCompanyUsers();
+
+        $companyUserCriteriaFilterTransfer = (new CompanyUserCriteriaFilterTransfer())
+            ->setIdCompany($idCompany)
+            ->setFilter(
+                (new FilterTransfer())
+                    ->setLimit($this->getPaginationParameter(static::QUERY_PARAMETER_LIMIT) ?? static::DEFAULT_COLLECTION_LIMIT)
+                    ->setOffset($this->getPaginationOffset()),
+            );
+
+        $companyUserCriteriaFilterTransfer = $this->applyFilters($companyUserCriteriaFilterTransfer);
+
+        $companyUserCollectionTransfer = $this->companyUsersRestApiClient->getCompanyUserCollection($companyUserCriteriaFilterTransfer);
+
+        $resources = [];
+
+        foreach ($companyUserCollectionTransfer->getCompanyUsers() as $companyUserTransfer) {
+            $resources[] = $this->denormalizeToResource($companyUserTransfer);
+        }
+
+        return $resources;
+    }
+
+    protected function applyFilters(
+        CompanyUserCriteriaFilterTransfer $companyUserCriteriaFilterTransfer
+    ): CompanyUserCriteriaFilterTransfer {
+        $filters = $this->getRequest()->query->all(static::FILTER_KEY);
+
+        foreach ($this->extractFilterValues($filters, static::FILTER_KEY_COMPANY_BUSINESS_UNITS) as $uuid) {
+            $companyUserCriteriaFilterTransfer->addCompanyBusinessUnitUuids($uuid);
+        }
+
+        foreach ($this->extractFilterValues($filters, static::FILTER_KEY_COMPANY_ROLES) as $uuid) {
+            $companyUserCriteriaFilterTransfer->addCompanyRolesUuids($uuid);
+        }
+
+        return $companyUserCriteriaFilterTransfer;
+    }
+
+    /**
+     * @param array<string, mixed> $filters
+     *
+     * @return list<string>
+     */
+    protected function extractFilterValues(array $filters, string $key): array
+    {
+        $value = $filters[$key] ?? null;
+
+        if (is_string($value) && $value !== '') {
+            return [$value];
+        }
+
+        if (is_array($value)) {
+            return array_map('strval', array_values($value));
+        }
+
+        return [];
+    }
+
+    protected function getCurrentUserCompanyId(): int
+    {
+        $idCompany = $this->getCustomer()->getCompanyUserTransfer()?->getFkCompany();
+
+        if ($idCompany === null) {
+            throw $this->companyUsersExceptionFactory->createCompanyUserNotSelectedException();
+        }
+
+        return $idCompany;
+    }
+
+    protected function assertCanSeeCompanyUsers(): void
+    {
+        if ($this->can(static::PERMISSION_SEE_COMPANY_USERS)) {
+            return;
+        }
+
+        throw $this->companyUsersExceptionFactory->createCompanyUserHasNoPermissionException();
+    }
+
+    protected function findCompanyUserByUuid(string $uuid): ?CompanyUserTransfer
+    {
+        $companyUserStorageTransfer = $this->companyUserStorageClient->findCompanyUserByMapping(
+            static::MAPPING_TYPE_UUID,
+            $uuid,
+        );
+
+        if ($companyUserStorageTransfer === null) {
+            return null;
+        }
+
+        return $this->companyUserClient->getCompanyUserById(
+            (new CompanyUserTransfer())->setIdCompanyUser($companyUserStorageTransfer->getIdCompanyUser()),
+        );
+    }
+
+    protected function denormalizeToResource(CompanyUserTransfer $companyUserTransfer): CompanyUsersStorefrontResource
+    {
+        return $this->serializer->denormalize(
+            $this->companyUsersResourceMapper->mapCompanyUserTransferToResourceData($companyUserTransfer),
+            CompanyUsersStorefrontResource::class,
+        );
     }
 }
