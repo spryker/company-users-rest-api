@@ -16,6 +16,14 @@ resource:
           name: getCompanyUsersMine
           uriTemplate: '/company-users/mine'
           description: 'Retrieve all active company users of the authenticated customer.'
+          openapiContext:
+              responses:
+                  200:
+                      description: 'Active company users of the authenticated customer returned.'
+                  401:
+                      description: 'Invalid access token.'
+                  403:
+                      description: 'Access denied: missing access token or insufficient scope.'
 
         - type: Get
           name: getCompanyUserByUuid
@@ -26,9 +34,9 @@ resource:
                   200:
                       description: 'Company user returned.'
                   401:
-                      description: 'Missing or invalid access token.'
+                      description: 'Invalid access token.'
                   403:
-                      description: 'Authenticated customer has no active company user session — only emitted for the legacy `/company-users/` shorthand (code 1403).'
+                      description: 'Access denied: missing access token, no active company user session (code 1403), or no SeeCompanyUsers permission (code 1405).'
                   404:
                       description: "Company user not found, or does not belong to the authenticated user's company (code 1404)."
 
@@ -36,6 +44,14 @@ resource:
           name: getCompanyUserCollection
           uriTemplate: '/company-users'
           description: 'Retrieve company users of the current company. Supports filter[company-business-units]=<uuid> and filter[company-roles]=<uuid>; both can be repeated.'
+          openapiContext:
+              responses:
+                  200:
+                      description: 'Company users of the current company returned.'
+                  401:
+                      description: 'Invalid access token.'
+                  403:
+                      description: 'Access denied: missing access token, no active company user session (code 1403), or no SeeCompanyUsers permission (code 1405).'
 
     includes:
         - relationshipName: companies
@@ -55,7 +71,6 @@ resource:
           resolverClass: Spryker\Glue\CustomersRestApi\Api\Storefront\Relationship\CustomersRelationshipResolver
 
     properties:
-        # `uuid` is the JSON:API resource id (`data.id`), not an attribute.
         uuid:
             type: string
             identifier: true
